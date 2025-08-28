@@ -1,0 +1,153 @@
+import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
+import 'login_screen.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_drawer.dart';
+import 'saving_goal_screen.dart';
+import 'saving_history_screen.dart';
+import 'wishlist_screen.dart';
+import 'saving_simulator_screen.dart';
+import 'statistics_screen.dart'; // เพิ่ม import
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final user = AuthService.currentUser ?? 'Unknown';
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const HomeScreen()),
+              (route) => false,
+            );
+          },
+          tooltip: 'Back to Home',
+        ),
+        title: const Text('ชื่อหน้าของคุณ'),
+        actions: [
+          // ...icon อื่นๆ เช่น โปรไฟล์...
+        ],
+      ),
+      drawer: const CustomDrawer(),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('สวัสดี, $user', style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 24),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 24,
+                crossAxisSpacing: 24,
+                children: [
+                  _HomeMenuCard(
+                    icon: Icons.savings,
+                    title: 'ออมเงิน',
+                    color: Colors.blue,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SavingGoalScreen()),
+                      );
+                    },
+                  ),
+                  _HomeMenuCard(
+                    icon: Icons.history,
+                    title: 'ประวัติการออม',
+                    color: Colors.green,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SavingHistoryScreen()),
+                      );
+                    },
+                  ),
+                  _HomeMenuCard(
+                    icon: Icons.shopping_cart,
+                    title: 'สิ่งที่อยากได้',
+                    color: Colors.orange,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const WishlistScreen()),
+                      );
+                    },
+                  ),
+                  _HomeMenuCard(
+                    icon: Icons.calculate,
+                    title: 'คำนวณแผนการออม',
+                    color: Colors.purple,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SavingSimulatorScreen()),
+                      );
+                    },
+                  ),
+                  _HomeMenuCard(
+                    icon: Icons.bar_chart,
+                    title: 'สถิติการออม',
+                    color: Colors.teal,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const StatisticsScreen()),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HomeMenuCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _HomeMenuCard({
+    required this.icon,
+    required this.title,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 48, color: color),
+              const SizedBox(height: 16),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
